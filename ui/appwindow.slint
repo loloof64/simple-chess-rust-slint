@@ -1,14 +1,26 @@
 import { Button, VerticalBox } from "std-widgets.slint";
 
+export struct TranslationArgument {
+    name: string,
+    value: string,
+}
+
+export global Fluent {
+    pure callback translate(string, [TranslationArgument]) -> string;
+}
+
 export component AppWindow inherits Window {
     in-out property<int> counter: 42;
     callback request-increase-value();
+    protected pure function tr(str: string, args: [TranslationArgument]) -> string {
+        return Fluent.translate(str, args);
+    }
     VerticalBox {
         Text {
-            text: "Counter: \{root.counter}";
+            text: root.tr("counter", [{name: "counter", value: root.counter}]);
         }
         Button {
-            text: "Increase value";
+            text: root.tr("increase-button", []);
             clicked => {
                 root.request-increase-value();
             }
