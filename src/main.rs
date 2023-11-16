@@ -16,6 +16,14 @@ fn tr(key: &str, args: Vec<(String, String)>) -> String {
         Ok(l) => String::from(&l[..2]),
         _ => String::from("en"),
     };
+    let locale = if ["en", "es", "fr"]
+        .map(|elt| String::from(elt))
+        .contains(&locale)
+    {
+        locale
+    } else {
+        String::from("en")
+    };
 
     let mut translation = _rust_i18n_translate(locale.as_str(), key);
     for pair in args.iter() {
