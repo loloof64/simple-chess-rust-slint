@@ -5,7 +5,7 @@ export struct TranslationArgument {
     value: string,
 }
 
-export global Fluent {
+export global Translator {
     pure callback translate(string, [TranslationArgument]) -> string;
 }
 
@@ -13,7 +13,7 @@ export component AppWindow inherits Window {
     in-out property<int> counter: 42;
     callback request-increase-value();
     protected pure function tr(str: string, args: [TranslationArgument]) -> string {
-        return Fluent.translate(str, args);
+        return Translator.translate(str, args);
     }
     VerticalBox {
         Text {

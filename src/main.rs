@@ -34,7 +34,7 @@ fn tr(key: &str, args: Vec<(String, String)>) -> String {
 
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
-    ui.global::<Fluent>().on_translate(move |input, args| {
+    ui.global::<Translator>().on_translate(move |input, args| {
         let args = args
             .iter()
             .map(|elt| (elt.name.to_string(), elt.value.to_string()))
