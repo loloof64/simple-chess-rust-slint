@@ -16,6 +16,8 @@ export component AppWindow inherits Window {
     protected pure function tr(str: string, args: [TranslationArgument]) -> string {
         return Translator.translate(str, args);
     }
+    width: 900px;
+    height: 900px;
     /*
     VerticalBox {
         Text {
@@ -30,7 +32,7 @@ export component AppWindow inherits Window {
     }
     */
     ChessBoard {
-        size: 500px;
+        size: 150px;
         reversed: true;
     }
 }
