@@ -6,6 +6,16 @@ export component ChessBoard {
     in property <color> coordinatesColor: maroon;
     in property <bool> reversed: false;
     in property <bool> whiteTurn: true;
+    in property <[[string]]> pieces: [
+        ["r", "n", "b", "q", "k", "b", "n", "r"],
+        ["p", "p", "p", "p", "p", "p", "p", "p"],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["P", "P", "P", "P", "P", "P", "P", "P"],
+        ["R", "N", "B", "Q", "K", "B", "N", "R"],
+    ];
 
     Rectangle {
         width: size;
@@ -22,6 +32,67 @@ export component ChessBoard {
                     height: size / 9;
                     x: (size / 9) * (col+0.5);
                     background: mod(row+col, 2) == 0 ? whiteCellColor : blackCellColor;
+
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "P" : Image {
+                        source: @image-url("chess_vectors/Chess_plt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "N" : Image {
+                        source: @image-url("chess_vectors/Chess_nlt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "B" : Image {
+                        source: @image-url("chess_vectors/Chess_blt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "R" : Image {
+                        source: @image-url("chess_vectors/Chess_rlt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "Q" : Image {
+                        source: @image-url("chess_vectors/Chess_qlt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "K" : Image {
+                        source: @image-url("chess_vectors/Chess_klt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "p" : Image {
+                        source: @image-url("chess_vectors/Chess_pdt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "n" : Image {
+                        source: @image-url("chess_vectors/Chess_ndt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "b" : Image {
+                        source: @image-url("chess_vectors/Chess_bdt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "r" : Image {
+                        source: @image-url("chess_vectors/Chess_rdt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "q" : Image {
+                        source: @image-url("chess_vectors/Chess_qdt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
+                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "k" : Image {
+                        source: @image-url("chess_vectors/Chess_kdt45.svg");
+                        width: size/9;
+                        height: size/9;
+                    }
                 }
             }
 
