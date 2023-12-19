@@ -10,6 +10,7 @@ build = "build.rs"
 [dependencies]
 current_locale = "0.1.1"
 rust-i18n = "2.3.0"
+shakmaty = "0.26.0"
 slint = "1.3.0"
 
 [build-dependencies]

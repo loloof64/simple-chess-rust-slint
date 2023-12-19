@@ -11,29 +11,17 @@ export global Translator {
 }
 
 export component AppWindow inherits Window {
-    in-out property<int> counter: 42;
-    callback request-increase-value();
     protected pure function tr(str: string, args: [TranslationArgument]) -> string {
         return Translator.translate(str, args);
     }
     width: 900px;
     height: 900px;
-    /*
-    VerticalBox {
-        Text {
-            text: root.tr("counter", [{name: "counter", value: root.counter}]);
-        }
-        Button {
-            text: root.tr("increase-button", []);
-            clicked => {
-                root.request-increase-value();
-            }
-        }
-    }
-    */
-    ChessBoard {
+    in property pieces <=> board.pieces;
+    in property whiteTurn <=> board.whiteTurn;
+
+    board:= ChessBoard {
         size: 500px;
-        reversed: false;
+        reversed: true;
         whiteTurn: false;
     }
 }

@@ -33,6 +33,9 @@ fn tr(key: &str, args: Vec<(String, String)>) -> String {
     translation
 }
 
+mod game;
+use game::Game;
+
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
     ui.global::<Translator>().on_translate(move |input, args| {
@@ -42,12 +45,11 @@ fn main() -> Result<(), slint::PlatformError> {
             .collect::<Vec<_>>();
         tr(input.as_str(), args).into()
     });
-
-    let ui_handle = ui.as_weak();
-    ui.on_request_increase_value(move || {
-        let ui = ui_handle.unwrap();
-        ui.set_counter(ui.get_counter() + 1);
-    });
+    
+    let game = Game::new(String::from("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2")).unwrap();
+    let pieces = game.get_pieces();
+    ui.set_pieces(pieces);
+    ui.set_whiteTurn(game.is_white_turn());
 
     ui.run()
 }
