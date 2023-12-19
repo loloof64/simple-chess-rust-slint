@@ -1,10 +1,11 @@
 export component ChessBoard {
     in property <length> size;
-    in property <color> backgroundColor: lightgoldenrodyellow;
+    in property <color> backgroundColor: cadetblue;
     in property <color> whiteCellColor: navajowhite;
     in property <color> blackCellColor: peru;
-    in property <color> coordinatesColor: tomato;
+    in property <color> coordinatesColor: maroon;
     in property <bool> reversed: false;
+    in property <bool> whiteTurn: true;
 
     Rectangle {
         width: size;
@@ -59,6 +60,14 @@ export component ChessBoard {
                 font-size: (size/27);
                 text: ["1", "2", "3", "4", "5", "6", "7", "8"][rank];
             }
-
+            
+            Rectangle {
+                border-radius: size/36;
+                x: (size/9) * 8.5;
+                y: (size/9) * 8.5;
+                width: size/18;
+                height: size/18;
+                background: whiteTurn? white : black;
+            }
     }
 }
