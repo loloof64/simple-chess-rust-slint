@@ -1,0 +1,10 @@
+export component ChessBoard {
+    in property <length> size;
+    in property <color> backgroundColor: #33FFBD;
+
+    Rectangle {
+        width: size;
+        height: size;
+        background: backgroundColor;
+    }
+}

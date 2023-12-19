@@ -1,4 +1,5 @@
 import { Button, VerticalBox } from "std-widgets.slint";
+import { ChessBoard } from "chessboard.slint";
 
 export struct TranslationArgument {
     name: string,
@@ -15,6 +16,7 @@ export component AppWindow inherits Window {
     protected pure function tr(str: string, args: [TranslationArgument]) -> string {
         return Translator.translate(str, args);
     }
+    /*
     VerticalBox {
         Text {
             text: root.tr("counter", [{name: "counter", value: root.counter}]);
@@ -25,5 +27,10 @@ export component AppWindow inherits Window {
                 root.request-increase-value();
             }
         }
+    }
+    */
+    ChessBoard {
+        size: 100px;
+        backgroundColor: red;
     }
 }
