@@ -1,10 +1,26 @@
 export component ChessBoard {
     in property <length> size;
-    in property <color> backgroundColor: #33FFBD;
+    in property <color> backgroundColor: powderblue;
+    in property <color> whiteCellColor: navajowhite;
+    in property <color> blackCellColor: peru;
 
     Rectangle {
         width: size;
         height: size;
         background: backgroundColor;
+
+            for row in 8 : Rectangle {
+                width: size;
+                height: size / 9;
+                x: 0;
+                y: (size / 9) * (row+0.5);
+                for col in 8 : Rectangle {
+                    width: size / 9;
+                    height: size / 9;
+                    x: (size / 9) * (col+0.5);
+                    background: mod(row+col, 2) == 0 ? whiteCellColor : blackCellColor;
+                }
+            }
+
     }
 }
