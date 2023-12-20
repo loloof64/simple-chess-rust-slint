@@ -14,6 +14,9 @@ export component ChessBoard {
     in property <color> whiteCellColor: navajowhite;
     in property <color> blackCellColor: peru;
     in property <color> coordinatesColor: maroon;
+    in property <color> dragAndDropStartCellColor: red;
+    in property <color> dragAndDropEndCellColor: green;
+    in property <color> dragAndDropHelperCellColor: purple;
     in property <bool> reversed: false;
     in property <bool> whiteTurn: true;
     in property <[[string]]> pieces: [
@@ -33,6 +36,18 @@ export component ChessBoard {
         return (dndData.pieceValue != "") && (file == dndData.startFile) && (rank == dndData.startRank);
     }
 
+    function isDndStartCell(file: int, rank: int) -> bool {
+        return (dndData.pieceValue != "") && (file == dndData.startFile) && (rank == dndData.startRank);
+    }
+
+    function isDndEndCell(file: int, rank: int) -> bool {
+        return (dndData.pieceValue != "") && (file == dndData.endFile) && (rank == dndData.endRank);
+    }
+
+    function isDndHelperCell(file: int, rank: int) -> bool {
+        return (dndData.pieceValue != "") && ((file == dndData.endFile) || (rank == dndData.endRank));
+    }
+
     area := TouchArea {
         width: size;
         height: size;
@@ -43,11 +58,15 @@ export component ChessBoard {
                     dndData.y = area.mouse-y;
                     dndData.startFile = floor((area.mouse-x - (area.width / 9) * 0.5) / (area.width / 9));
                     dndData.startRank = floor((area.mouse-y - (area.width / 9) * 0.5) / (area.width / 9));
+                    dndData.endFile = dndData.startFile;
+                    dndData.endRank = dndData.startRank;
                     if (reversed) {
                         dndData.startFile = 7 - dndData.startFile;
+                        dndData.endFile = dndData.startFile;
                     }
                     else {
                         dndData.startRank = 7 - dndData.startRank;
+                        dndData.endRank = dndData.startRank;
                     }
                     if (dndData.startFile >= 0 && dndData.startFile <= 7 && dndData.startRank >= 0 && dndData.startRank <= 7) {
                         dndData.pieceValue = pieces[7-dndData.startRank][dndData.startFile];
@@ -77,6 +96,14 @@ export component ChessBoard {
             if (dndData.pieceValue != "") {
                 dndData.x = area.mouse-x;
                 dndData.y = area.mouse-y;
+                dndData.endFile = floor((area.mouse-x - (area.width / 9) * 0.5) / (area.width / 9));
+                dndData.endRank = floor((area.mouse-y - (area.width / 9) * 0.5) / (area.width / 9));
+                if (reversed) {
+                    dndData.endFile = 7-dndData.endFile;
+                }
+                else {
+                    dndData.endRank = 7 - dndData.endRank;
+                }
             }
         }
         Rectangle {
@@ -93,7 +120,11 @@ export component ChessBoard {
                         width: size / 9;
                         height: size / 9;
                         x: (size / 9) * (col+0.5);
-                        background: mod(row+col, 2) == 0 ? whiteCellColor : blackCellColor;
+                        background: 
+                            isDndEndCell(reversed ? 7-col : col, reversed?row : 7-row) ? dragAndDropEndCellColor : 
+                            isDndStartCell(reversed ? 7-col : col, reversed?row : 7-row) ? dragAndDropStartCellColor : 
+                            isDndHelperCell(reversed ? 7-col : col, reversed?row : 7-row) ? dragAndDropHelperCellColor : 
+                            mod(row+col, 2) == 0 ? whiteCellColor : blackCellColor;
     
                         if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "P" : Image {
                             source: @image-url("chess_vectors/Chess_plt45.svg");
