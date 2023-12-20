@@ -6,7 +6,7 @@ A simple chess application written in Rust with SlintUi.
 
 ### Images
 
-#### Chess vectors
+#### Chess vectors
 
 Chess vectors have been downloaded from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces) and designed by CBurnett.
 
