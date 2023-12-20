@@ -26,6 +26,7 @@ export component ChessBoard {
         ["P", "P", "P", "P", "P", "P", "P", "P"],
         ["R", "N", "B", "Q", "K", "B", "N", "R"],
     ];
+    callback moveSubmit(int, int, int, int);
     property <DragAndDrop> dndData: {pieceValue: "", x: 0, y: 0, startFile: 0, startRank: 0, endFile: 0, endRank: 0};
     
     function matchesMovedPiece(value: string, file: int, rank: int) -> bool {
@@ -65,7 +66,7 @@ export component ChessBoard {
                     }
                     if (dndData.pieceValue != "") {
                         if (dndData.endFile >= 0 && dndData.endFile <= 7 && dndData.endRank >= 0 && dndData.endRank <= 7) {
-                        
+                            moveSubmit(dndData.startFile, dndData.startRank, dndData.endFile, dndData.endRank);
                         }
                         dndData.pieceValue = "";
                     }

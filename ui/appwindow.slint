@@ -60,6 +60,7 @@ export component AppWindow inherits Window {
     in property pieces <=> board.pieces;
     in property whiteTurn <=> board.whiteTurn;
     property <bool> boardReversed: false;
+    callback moveSubmitted <=> board.moveSubmit;
 
     VerticalLayout {
         padding: 20px;

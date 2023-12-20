@@ -46,10 +46,17 @@ fn main() -> Result<(), slint::PlatformError> {
         tr(input.as_str(), args).into()
     });
     
-    let game = Game::default();
-    let pieces = game.get_pieces();
-    ui.set_pieces(pieces);
+    let mut game = Game::default();
+    ui.set_pieces(game.get_pieces());
     ui.set_whiteTurn(game.is_white_turn());
+    let ui_handle = ui.as_weak();
+    ui.on_moveSubmitted(move |start_file, start_rank, end_file, end_rank| {
+        let ui = ui_handle.unwrap();
+
+        game.try_making_move(start_file, start_rank, end_file, end_rank);
+        ui.set_pieces(game.get_pieces());
+        ui.set_whiteTurn(game.is_white_turn());
+    });
 
     ui.run()
 }
