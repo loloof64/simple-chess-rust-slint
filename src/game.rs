@@ -10,6 +10,14 @@ pub enum PositionParseError {
     PositionError(String),
 }
 
+#[derive(Debug, PartialEq)]
+#[allow(dead_code)]
+pub enum MoveResult {
+    Done,
+    IsPromotion,
+    Failure,
+}
+
 #[derive(Default)]
 pub struct Game {
     position: Board,
@@ -87,7 +95,7 @@ impl Game {
         start_rank: i32,
         end_file: i32,
         end_rank: i32,
-    ) {
+    ) -> MoveResult {
         let legal_moves = MoveGen::new_legal(&self.position);
         let matching_moves: Vec<_> = legal_moves.into_iter().filter(|current| {
             let from = current.get_source();
@@ -99,9 +107,18 @@ impl Game {
         }).collect();
         if !matching_moves.is_empty() {
             let move_to_process = matching_moves[0];
-            let mut result = Board::default();
-            self.position.make_move(move_to_process, &mut result);
-            self.position = result;
+            if move_to_process.get_promotion().is_some() {
+                MoveResult::IsPromotion
+            }
+            else {
+                let mut result = Board::default();
+                self.position.make_move(move_to_process, &mut result);
+                self.position = result;
+                MoveResult::Done
+            }
+        }
+        else {
+            MoveResult::Failure
         }
     }
 }

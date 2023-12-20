@@ -34,7 +34,7 @@ fn tr(key: &str, args: Vec<(String, String)>) -> String {
 }
 
 mod game;
-use game::Game;
+use game::{Game, MoveResult};
 
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
@@ -53,9 +53,17 @@ fn main() -> Result<(), slint::PlatformError> {
     ui.on_moveSubmitted(move |start_file, start_rank, end_file, end_rank| {
         let ui = ui_handle.unwrap();
 
-        game.try_making_move(start_file, start_rank, end_file, end_rank);
-        ui.set_pieces(game.get_pieces());
-        ui.set_whiteTurn(game.is_white_turn());
+        let result = game.try_making_move(start_file, start_rank, end_file, end_rank);
+        match result {
+            MoveResult::Done => {
+                ui.set_pieces(game.get_pieces());
+                ui.set_whiteTurn(game.is_white_turn());
+            },
+            MoveResult::IsPromotion => {
+                
+            },
+            _ => {}
+        }
     });
 
     ui.run()
