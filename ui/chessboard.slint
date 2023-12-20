@@ -1,3 +1,13 @@
+struct DragAndDrop {
+    pieceValue: string,
+    x: length,
+    y: length,
+    startFile: int,
+    startRank: int,
+    endFile: int,
+    endRank: int,
+}
+
 export component ChessBoard {
     in property <length> size;
     in property <color> backgroundColor: cadetblue;
@@ -16,129 +26,265 @@ export component ChessBoard {
         ["P", "P", "P", "P", "P", "P", "P", "P"],
         ["R", "N", "B", "Q", "K", "B", "N", "R"],
     ];
+    property <DragAndDrop> dndData: {pieceValue: "", x: 0, y: 0, startFile: 0, startRank: 0, endFile: 0, endRank: 0};
     
-    Rectangle {
+    function matchesMovedPiece(value: string, file: int, rank: int) -> bool {
+        return (dndData.pieceValue != "") && (file == dndData.startFile) && (rank == dndData.startRank);
+    }
+
+    area := TouchArea {
         width: size;
         height: size;
-        background: backgroundColor;
-
-            for row in 8 : Rectangle {
-                width: size;
-                height: size / 9;
-                x: 0;
-                y: (size / 9) * (row+0.5);
-                for col in 8 : Rectangle {
-                    width: size / 9;
-                    height: size / 9;
-                    x: (size / 9) * (col+0.5);
-                    background: mod(row+col, 2) == 0 ? whiteCellColor : blackCellColor;
-
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "P" : Image {
-                        source: @image-url("chess_vectors/Chess_plt45.svg");
-                        width: size/9;
-                        height: size/9;
+        pointer-event(e) => {
+            if (e.button == PointerEventButton.left) {
+                if (e.kind == PointerEventKind.down) {
+                    dndData.x = area.mouse-x;
+                    dndData.y = area.mouse-y;
+                    dndData.startFile = floor((area.mouse-x - (area.width / 9) * 0.5) / (area.width / 9));
+                    dndData.startRank = floor((area.mouse-y - (area.width / 9) * 0.5) / (area.width / 9));
+                    if (reversed) {
+                        dndData.startFile = 7 - dndData.startFile;
                     }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "N" : Image {
-                        source: @image-url("chess_vectors/Chess_nlt45.svg");
-                        width: size/9;
-                        height: size/9;
+                    else {
+                        dndData.startRank = 7 - dndData.startRank;
                     }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "B" : Image {
-                        source: @image-url("chess_vectors/Chess_blt45.svg");
-                        width: size/9;
-                        height: size/9;
+                    if (dndData.startFile >= 0 && dndData.startFile <= 7 && dndData.startRank >= 0 && dndData.startRank <= 7) {
+                        dndData.pieceValue = pieces[7-dndData.startRank][dndData.startFile];
                     }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "R" : Image {
-                        source: @image-url("chess_vectors/Chess_rlt45.svg");
-                        width: size/9;
-                        height: size/9;
+                }
+                else if (e.kind == PointerEventKind.up) {
+                    dndData.x = area.mouse-x;
+                    dndData.y = area.mouse-y;
+                    dndData.endFile = floor((area.mouse-x - (area.width / 9) * 0.5) / (area.width / 9));
+                    dndData.endRank = floor((area.mouse-y - (area.width / 9) * 0.5) / (area.width / 9));
+                    if (reversed) {
+                        dndData.endFile = 7-dndData.endFile;
                     }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "Q" : Image {
-                        source: @image-url("chess_vectors/Chess_qlt45.svg");
-                        width: size/9;
-                        height: size/9;
+                    else {
+                        dndData.endRank = 7 - dndData.endRank;
                     }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "K" : Image {
-                        source: @image-url("chess_vectors/Chess_klt45.svg");
-                        width: size/9;
-                        height: size/9;
-                    }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "p" : Image {
-                        source: @image-url("chess_vectors/Chess_pdt45.svg");
-                        width: size/9;
-                        height: size/9;
-                    }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "n" : Image {
-                        source: @image-url("chess_vectors/Chess_ndt45.svg");
-                        width: size/9;
-                        height: size/9;
-                    }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "b" : Image {
-                        source: @image-url("chess_vectors/Chess_bdt45.svg");
-                        width: size/9;
-                        height: size/9;
-                    }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "r" : Image {
-                        source: @image-url("chess_vectors/Chess_rdt45.svg");
-                        width: size/9;
-                        height: size/9;
-                    }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "q" : Image {
-                        source: @image-url("chess_vectors/Chess_qdt45.svg");
-                        width: size/9;
-                        height: size/9;
-                    }
-                    if pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "k" : Image {
-                        source: @image-url("chess_vectors/Chess_kdt45.svg");
-                        width: size/9;
-                        height: size/9;
+                    if (dndData.pieceValue != "") {
+                        if (dndData.endFile >= 0 && dndData.endFile <= 7 && dndData.endRank >= 0 && dndData.endRank <= 7) {
+                        
+                        }
+                        dndData.pieceValue = "";
                     }
                 }
             }
-
-            for file in 8: Text {
-                x: (size/9) * (0.9 + (reversed ? (7-file) : file));
-                y: (size/9) * 0.05;
-                color: coordinatesColor;
-                font-weight: 200;
-                font-size: (size/27);
-                text: ["A", "B", "C", "D", "E", "F", "G", "H"][file];
+        }
+        moved => {
+            if (dndData.pieceValue != "") {
+                dndData.x = area.mouse-x;
+                dndData.y = area.mouse-y;
             }
-
-            for file in 8: Text {
-                x: (size/9) * (0.9 + (reversed ? (7-file) : file));
-                y: (size/9) * 8.55;
-                color: coordinatesColor;
-                font-weight: 200;
-                font-size: (size/27);
-                text: ["A", "B", "C", "D", "E", "F", "G", "H"][file];
-            }
-
-            for rank in 8: Text {
-                x: (size/9) * 0.15;
-                y: (size/9) * (0.85 + (reversed ? rank : (7-rank)));
-                color: coordinatesColor;
-                font-weight: 200;
-                font-size: (size/27);
-                text: ["1", "2", "3", "4", "5", "6", "7", "8"][rank];
-            }
-
-            for rank in 8: Text {
-                x: (size/9) * 8.65;
-                y: (size/9) * (0.85 + (reversed ? rank : (7-rank)));
-                color: coordinatesColor;
-                font-weight: 200;
-                font-size: (size/27);
-                text: ["1", "2", "3", "4", "5", "6", "7", "8"][rank];
-            }
-            
-            Rectangle {
-                border-radius: size/36;
-                x: (size/9) * 8.5;
-                y: (size/9) * 8.5;
-                width: size/18;
-                height: size/18;
-                background: whiteTurn? white : black;
-            }
+        }
+        Rectangle {
+            width: parent.width;
+            height: parent.height;
+            background: backgroundColor;
+    
+                for row in 8 : Rectangle {
+                    width: size;
+                    height: size / 9;
+                    x: 0;
+                    y: (size / 9) * (row+0.5);
+                    for col in 8 : Rectangle {
+                        width: size / 9;
+                        height: size / 9;
+                        x: (size / 9) * (col+0.5);
+                        background: mod(row+col, 2) == 0 ? whiteCellColor : blackCellColor;
+    
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "P" : Image {
+                            source: @image-url("chess_vectors/Chess_plt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "N" : Image {
+                            source: @image-url("chess_vectors/Chess_nlt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "B" : Image {
+                            source: @image-url("chess_vectors/Chess_blt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "R" : Image {
+                            source: @image-url("chess_vectors/Chess_rlt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "Q" : Image {
+                            source: @image-url("chess_vectors/Chess_qlt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "K" : Image {
+                            source: @image-url("chess_vectors/Chess_klt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "p" : Image {
+                            source: @image-url("chess_vectors/Chess_pdt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "n" : Image {
+                            source: @image-url("chess_vectors/Chess_ndt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "b" : Image {
+                            source: @image-url("chess_vectors/Chess_bdt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "r" : Image {
+                            source: @image-url("chess_vectors/Chess_rdt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "q" : Image {
+                            source: @image-url("chess_vectors/Chess_qdt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                        if (matchesMovedPiece(dndData.pieceValue, reversed ? 7-col : col, reversed?row : 7-row) == false) && pieces[reversed ? 7-row : row][reversed ? 7-col : col] == "k" : Image {
+                            source: @image-url("chess_vectors/Chess_kdt45.svg");
+                            width: size/9;
+                            height: size/9;
+                        }
+                    }
+                }
+    
+                for file in 8: Text {
+                    x: (size/9) * (0.9 + (reversed ? (7-file) : file));
+                    y: (size/9) * 0.05;
+                    color: coordinatesColor;
+                    font-weight: 200;
+                    font-size: (size/27);
+                    text: ["A", "B", "C", "D", "E", "F", "G", "H"][file];
+                }
+    
+                for file in 8: Text {
+                    x: (size/9) * (0.9 + (reversed ? (7-file) : file));
+                    y: (size/9) * 8.55;
+                    color: coordinatesColor;
+                    font-weight: 200;
+                    font-size: (size/27);
+                    text: ["A", "B", "C", "D", "E", "F", "G", "H"][file];
+                }
+    
+                for rank in 8: Text {
+                    x: (size/9) * 0.15;
+                    y: (size/9) * (0.85 + (reversed ? rank : (7-rank)));
+                    color: coordinatesColor;
+                    font-weight: 200;
+                    font-size: (size/27);
+                    text: ["1", "2", "3", "4", "5", "6", "7", "8"][rank];
+                }
+    
+                for rank in 8: Text {
+                    x: (size/9) * 8.65;
+                    y: (size/9) * (0.85 + (reversed ? rank : (7-rank)));
+                    color: coordinatesColor;
+                    font-weight: 200;
+                    font-size: (size/27);
+                    text: ["1", "2", "3", "4", "5", "6", "7", "8"][rank];
+                }
+                
+                Rectangle {
+                    border-radius: size/36;
+                    x: (size/9) * 8.5;
+                    y: (size/9) * 8.5;
+                    width: size/18;
+                    height: size/18;
+                    background: whiteTurn? white : black;
+                }
+        }
+        if dndData.pieceValue == "P" : Image {
+            source: @image-url("chess_vectors/Chess_plt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "N":  Image {
+            source: @image-url("chess_vectors/Chess_nlt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "B":  Image {
+            source: @image-url("chess_vectors/Chess_blt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "R":  Image {
+            source: @image-url("chess_vectors/Chess_rlt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "Q":  Image {
+            source: @image-url("chess_vectors/Chess_qlt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "K":  Image {
+            source: @image-url("chess_vectors/Chess_klt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "p" : Image {
+            source: @image-url("chess_vectors/Chess_pdt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "n":  Image {
+            source: @image-url("chess_vectors/Chess_ndt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "b":  Image {
+            source: @image-url("chess_vectors/Chess_bdt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "r":  Image {
+            source: @image-url("chess_vectors/Chess_rdt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "q":  Image {
+            source: @image-url("chess_vectors/Chess_qdt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
+        if dndData.pieceValue == "k":  Image {
+            source: @image-url("chess_vectors/Chess_kdt45.svg");
+            width: size/9;
+            height: size/9;
+            x: dndData.x - size/18;
+            y: dndData.y - size/18;
+        }
     }
 }

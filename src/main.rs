@@ -46,7 +46,7 @@ fn main() -> Result<(), slint::PlatformError> {
         tr(input.as_str(), args).into()
     });
     
-    let game = Game::new(String::from("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2")).unwrap();
+    let game = Game::default();
     let pieces = game.get_pieces();
     ui.set_pieces(pieces);
     ui.set_whiteTurn(game.is_white_turn());
