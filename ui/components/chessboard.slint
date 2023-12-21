@@ -48,11 +48,13 @@ export component ChessBoard {
     }
 
     function isDndStartCell(file: int, rank: int) -> bool {
-        return (dndData.pieceValue != "") && (file == dndData.startFile) && (rank == dndData.startRank);
+        return ((dndData.pieceValue != "") && (file == dndData.startFile) && (rank == dndData.startRank))
+        || (pendingPromotion.isActive && (file == pendingPromotion.startFile) && (rank == pendingPromotion.startRank));
     }
 
     function isDndEndCell(file: int, rank: int) -> bool {
-        return (dndData.pieceValue != "") && (file == dndData.endFile) && (rank == dndData.endRank);
+        return ((dndData.pieceValue != "") && (file == dndData.endFile) && (rank == dndData.endRank))
+        || (pendingPromotion.isActive && (file == pendingPromotion.endFile) && (rank == pendingPromotion.endRank));
     }
 
     function isDndHelperCell(file: int, rank: int) -> bool {
@@ -131,7 +133,7 @@ export component ChessBoard {
                         width: size / 9;
                         height: size / 9;
                         x: (size / 9) * (col+0.5);
-                        background: 
+                        background:
                             isDndEndCell(reversed ? 7-col : col, reversed?row : 7-row) ? dragAndDropEndCellColor : 
                             isDndStartCell(reversed ? 7-col : col, reversed?row : 7-row) ? dragAndDropStartCellColor : 
                             isDndHelperCell(reversed ? 7-col : col, reversed?row : 7-row) ? dragAndDropHelperCellColor : 
@@ -243,22 +245,6 @@ export component ChessBoard {
                     width: size/18;
                     height: size/18;
                     background: whiteTurn? white : black;
-                }
-
-                if (pendingPromotion.isActive) : Path {
-                    width: size;
-                    height: size;
-                    stroke-width: 10px;
-                    fill: promotionArrowColor;
-
-                    MoveTo {
-                        x: (size/9px) * (pendingPromotion.startFile + 0.5);
-                        y: (size/9px) * (7.5 - pendingPromotion.startRank);
-                    }
-                    LineTo {
-                        x: (size/9px) * (pendingPromotion.endFile + 0.5);
-                        y: (size/9px) * (7.5 - pendingPromotion.endRank);
-                    }
                 }
         }
         if dndData.pieceValue == "P" : Image {
