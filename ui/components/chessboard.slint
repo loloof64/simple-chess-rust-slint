@@ -65,7 +65,7 @@ export component ChessBoard {
         width: size;
         height: size;
         pointer-event(e) => {
-            if (e.button == PointerEventButton.left) {
+            if (e.button == PointerEventButton.left && !pendingPromotion.isActive) {
                 if (e.kind == PointerEventKind.down) {
                     dndData.x = area.mouse-x;
                     dndData.y = area.mouse-y;
@@ -106,7 +106,7 @@ export component ChessBoard {
             }
         }
         moved => {
-            if (dndData.pieceValue != "") {
+            if (dndData.pieceValue != "" && !pendingPromotion.isActive) {
                 dndData.x = area.mouse-x;
                 dndData.y = area.mouse-y;
                 dndData.endFile = floor((area.mouse-x - (area.width / 9) * 0.5) / (area.width / 9));
