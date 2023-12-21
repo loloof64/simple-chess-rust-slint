@@ -61,6 +61,11 @@ export component ChessBoard {
         return (dndData.pieceValue != "") && ((file == dndData.endFile) || (rank == dndData.endRank));
     }
 
+    function isUserInTurnPiece(value: string) -> bool {
+        return whiteTurn? (value == "P" || value == "N" || value == "B" || value == "R" || value == "Q" || value == "K")
+        : (value == "p" || value == "n" || value == "b" || value == "r" || value == "q" || value == "k");
+    }
+
     area := TouchArea {
         width: size;
         height: size;
@@ -81,7 +86,7 @@ export component ChessBoard {
                         dndData.startRank = 7 - dndData.startRank;
                         dndData.endRank = dndData.startRank;
                     }
-                    if (dndData.startFile >= 0 && dndData.startFile <= 7 && dndData.startRank >= 0 && dndData.startRank <= 7) {
+                    if (dndData.startFile >= 0 && dndData.startFile <= 7 && dndData.startRank >= 0 && dndData.startRank <= 7 && isUserInTurnPiece(pieces[7-dndData.startRank][dndData.startFile])) {
                         dndData.pieceValue = pieces[7-dndData.startRank][dndData.startFile];
                     }
                 }
