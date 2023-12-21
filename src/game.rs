@@ -1,6 +1,9 @@
-use std::{rc::Rc, str::FromStr};
+use std::{
+    rc::Rc,
+    str::FromStr,
+};
 
-use chess::{Board, Color, Error, File, MoveGen, Rank, Square};
+use chess::{Board, ChessMove, Color, Error, File, MoveGen, Rank, Square};
 use slint::{ModelRc, SharedString, VecModel};
 
 #[derive(Debug)]
@@ -18,7 +21,7 @@ pub enum MoveResult {
     Failure,
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Game {
     position: Board,
     reversed: bool,
@@ -34,6 +37,10 @@ impl Game {
         })
     }
 
+    pub fn get_board(&self) -> Board {
+        self.position
+    }
+
     pub fn get_pieces(&self) -> ModelRc<ModelRc<SharedString>> {
         let mut result = Vec::<ModelRc<SharedString>>::new();
 
@@ -47,7 +54,7 @@ impl Game {
                     ))
                 } else {
                     self.position.piece_on(Square::make_square(
-                        Rank::from_index(7-row),
+                        Rank::from_index(7 - row),
                         File::from_index(col),
                     ))
                 };
@@ -60,7 +67,7 @@ impl Game {
                             ))
                         } else {
                             self.position.color_on(Square::make_square(
-                                Rank::from_index(7-row),
+                                Rank::from_index(7 - row),
                                 File::from_index(col),
                             ))
                         };
@@ -97,28 +104,35 @@ impl Game {
         end_rank: i32,
     ) -> MoveResult {
         let legal_moves = MoveGen::new_legal(&self.position);
-        let matching_moves: Vec<_> = legal_moves.into_iter().filter(|current| {
-            let from = current.get_source();
-            let to = current.get_dest();
-            return from.get_file().to_index() == start_file as usize
-                && from.get_rank().to_index() == start_rank as usize
-                && to.get_file().to_index() == end_file as usize
-                && to.get_rank().to_index() == end_rank as usize;
-        }).collect();
+        let matching_moves: Vec<_> = legal_moves
+            .into_iter()
+            .filter(|current| {
+                let from = current.get_source();
+                let to = current.get_dest();
+                return from.get_file().to_index() == start_file as usize
+                    && from.get_rank().to_index() == start_rank as usize
+                    && to.get_file().to_index() == end_file as usize
+                    && to.get_rank().to_index() == end_rank as usize;
+            })
+            .collect();
         if !matching_moves.is_empty() {
             let move_to_process = matching_moves[0];
             if move_to_process.get_promotion().is_some() {
                 MoveResult::IsPromotion
-            }
-            else {
+            } else {
                 let mut result = Board::default();
                 self.position.make_move(move_to_process, &mut result);
                 self.position = result;
                 MoveResult::Done
             }
-        }
-        else {
+        } else {
             MoveResult::Failure
         }
+    }
+
+    pub fn make_move(&mut self, move_to_do: ChessMove) {
+        let mut result = Board::default();
+        self.position.make_move(move_to_do, &mut result);
+        self.position = result;
     }
 }

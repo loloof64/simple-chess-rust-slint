@@ -1,0 +1,94 @@
+component PieceButton {
+    in property <bool> selected: false;
+    callback onClick <=> touch.clicked;
+    
+    touch := TouchArea {
+        Rectangle {
+            border-width: selected? 2px : 0px;
+            border-color: red;
+            border-radius: 5px;
+            @children
+        }
+    }
+}
+
+export component ChoosePromotionPieceDialogContent {
+    in property <bool> forWhitePlayer: true;
+    out property <string> selection;
+
+    Rectangle {
+        height: 120px;
+        border-color: blueviolet;
+        border-width: 2px;
+        border-radius: 10px;
+
+        HorizontalLayout {
+            padding: 4px;
+            alignment: space-around;
+            PieceButton {
+                onClick => {
+                    selection = "q";
+                }
+                selected: selection == "q";
+                width: parent.height - 2*parent.padding;
+                height: parent.height - 2*parent.padding;
+
+                Image {
+                    source: forWhitePlayer ? 
+                        @image-url("../images/chess_vectors/Chess_qlt45.svg") : 
+                        @image-url("../images/chess_vectors/Chess_qdt45.svg");
+                    width: 90%;
+                    height: 90%;
+                }
+            }
+            PieceButton {
+                onClick => {
+                    selection = "r";
+                }
+                selected: selection == "r";
+                width: parent.height - 2*parent.padding;
+                height: parent.height - 2*parent.padding;
+
+                Image {
+                    source: forWhitePlayer ? 
+                        @image-url("../images/chess_vectors/Chess_rlt45.svg") : 
+                        @image-url("../images/chess_vectors/Chess_rdt45.svg");
+                    width: 90%;
+                    height: 90%;
+                }
+            }
+            PieceButton {
+                onClick => {
+                    selection = "b";
+                }
+                selected: selection == "b";
+                width: parent.height - 2*parent.padding;
+                height: parent.height - 2*parent.padding;
+
+                Image {
+                    source: forWhitePlayer ? 
+                        @image-url("../images/chess_vectors/Chess_blt45.svg") : 
+                        @image-url("../images/chess_vectors/Chess_bdt45.svg");
+                    width: 90%;
+                    height: 90%;
+                }
+            }
+            PieceButton {
+                onClick => {
+                    selection = "n";
+                }
+                selected: selection == "n";
+                width: parent.height - 2*parent.padding;
+                height: parent.height - 2*parent.padding;
+
+                Image {
+                    source: forWhitePlayer ? 
+                        @image-url("../images/chess_vectors/Chess_nlt45.svg") : 
+                        @image-url("../images/chess_vectors/Chess_ndt45.svg");
+                    width: 90%;
+                    height: 90%;
+                }
+            }
+        }
+    }
+}

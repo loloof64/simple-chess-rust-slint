@@ -1,5 +1,6 @@
-import { Button, VerticalBox } from "std-widgets.slint";
-import { ChessBoard } from "components/chess_board/chessboard.slint";
+import { Button, VerticalBox , StandardButton, HorizontalBox} from "std-widgets.slint";
+import { ChessBoard, PendingPromotion } from "components/chessboard.slint";
+import { ChoosePromotionPieceDialogContent } from "components/choosepromotionpiece.slint";
 
 export struct TranslationArgument {
     name: string,
@@ -60,7 +61,9 @@ export component AppWindow inherits Window {
     in property pieces <=> board.pieces;
     in property whiteTurn <=> board.whiteTurn;
     property <bool> boardReversed: false;
+    in-out property <PendingPromotion> pendingPromotion <=> board.pendingPromotion;
     callback moveSubmitted <=> board.moveSubmit;
+    callback promotionValidated(string);
 
     VerticalLayout {
         padding: 20px;
@@ -74,6 +77,25 @@ export component AppWindow inherits Window {
             size: 500px;
             reversed: boardReversed;
             whiteTurn: false;
+        }
+    }
+
+    if (pendingPromotion.isActive): Dialog {
+        promotionDlgContent := ChoosePromotionPieceDialogContent {
+            forWhitePlayer: whiteTurn;
+        }
+        StandardButton {
+            kind: cancel;
+            clicked => {
+                pendingPromotion.isActive = false;
+            }
+        }
+        StandardButton {
+            kind: ok;
+            clicked => {
+                promotionValidated(promotionDlgContent.selection);
+                pendingPromotion.isActive = false;
+            }
         }
     }
 }
