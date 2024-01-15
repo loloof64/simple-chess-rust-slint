@@ -58,6 +58,7 @@ export component AppWindow inherits Window {
     }
     width: 900px;
     height: 900px;
+    in property gameOver <=> board.gameOver;
     in property pieces <=> board.pieces;
     in property whiteTurn <=> board.whiteTurn;
     property <bool> boardReversed: false;

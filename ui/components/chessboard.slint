@@ -40,6 +40,7 @@ export component ChessBoard {
     ];
     in property <PendingPromotion> pendingPromotion: {isActive: false, startFile: 0, startRank: 0,
         endFile: 0, endRank: 0};
+    in property <bool> gameOver: true;
     callback moveSubmit(int, int, int, int);
     property <DragAndDrop> dndData: {pieceValue: "", x: 0, y: 0, startFile: 0, startRank: 0, endFile: 0, endRank: 0};
     
@@ -70,7 +71,7 @@ export component ChessBoard {
         width: size;
         height: size;
         pointer-event(e) => {
-            if (e.button == PointerEventButton.left && !pendingPromotion.isActive) {
+            if (!gameOver && e.button == PointerEventButton.left && !pendingPromotion.isActive) {
                 if (e.kind == PointerEventKind.down) {
                     dndData.x = area.mouse-x;
                     dndData.y = area.mouse-y;
@@ -111,7 +112,7 @@ export component ChessBoard {
             }
         }
         moved => {
-            if (dndData.pieceValue != "" && !pendingPromotion.isActive) {
+            if (!gameOver && dndData.pieceValue != "" && !pendingPromotion.isActive) {
                 dndData.x = area.mouse-x;
                 dndData.y = area.mouse-y;
                 dndData.endFile = floor((area.mouse-x - (area.width / 9) * 0.5) / (area.width / 9));

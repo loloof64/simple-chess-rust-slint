@@ -6,9 +6,8 @@ extern crate rust_i18n;
 
 i18n!("i18n");
 
-use std::{rc::Rc, cell::RefCell};
+use std::{cell::RefCell, rc::Rc};
 
-use chess::MoveGen;
 use slint::Model;
 
 extern crate current_locale;
@@ -52,13 +51,19 @@ fn main() -> Result<(), slint::PlatformError> {
     let game = Game::default();
     ui.set_pieces(game.get_pieces());
     ui.set_whiteTurn(game.is_white_turn());
+    ui.set_gameOver(false);
     let game = Rc::new(RefCell::new(game));
     let game_1 = Rc::clone(&game);
     let ui_handle = ui.as_weak();
-    ui.on_moveSubmitted(move |start_file, start_rank, end_file, end_rank| {
+    ui.on_moveSubmitted(move |start_file: i32, start_rank, end_file, end_rank| {
         let ui = ui_handle.unwrap();
 
-        let result = game_1.borrow_mut().try_making_move(start_file, start_rank, end_file, end_rank);
+        let result = game_1.borrow_mut().try_making_move(
+            start_file as u8,
+            start_rank as u8,
+            end_file as u8,
+            end_rank as u8,
+        );
         match result {
             MoveResult::Done => {
                 ui.set_pieces(game_1.borrow().get_pieces());
@@ -81,30 +86,23 @@ fn main() -> Result<(), slint::PlatformError> {
     ui.on_promotionValidated(move |promotion_type| {
         let ui = ui_handle.unwrap();
         let pending_promotion = ui.get_pendingPromotion();
-        let legal_moves = MoveGen::new_legal(&game_2.borrow().get_board());
-        let matching_moves: Vec<_> = legal_moves
-            .into_iter()
-            .filter(|current| {
-                let from = current.get_source();
-                let to = current.get_dest();
-                return from.get_file().to_index() == pending_promotion.startFile as usize
-                    && from.get_rank().to_index() == pending_promotion.startRank as usize
-                    && to.get_file().to_index() == pending_promotion.endFile as usize
-                    && to.get_rank().to_index() == pending_promotion.endRank as usize
-                    && current.get_promotion().is_some()
-                    && current
-                        .get_promotion()
-                        .unwrap()
-                        .to_string(chess::Color::Black)
-                        .as_str()
-                        == promotion_type.as_str();
-            })
-            .collect();
-        if !matching_moves.is_empty() {
-            let move_to_process = matching_moves[0];
-            game_2.borrow_mut().make_move(move_to_process);
-            ui.set_pieces(game_2.borrow().get_pieces());
-            ui.set_whiteTurn(game_2.borrow().is_white_turn());
+        let start_file_char = (('a' as u8) + pending_promotion.startFile as u8) as char;
+        let start_rank_char = (('1' as u8) + pending_promotion.startRank as u8) as char;
+        let end_file_char = (('a' as u8) + pending_promotion.endFile as u8) as char;
+        let end_rank_char = (('1' as u8) + pending_promotion.endRank as u8) as char;
+        let move_to_apply_uci = format!(
+            "{}{}{}{}{}",
+            start_file_char, start_rank_char, end_file_char, end_rank_char, promotion_type,
+        );
+        let promotion_result = game_2.borrow_mut().try_commiting_promotion(move_to_apply_uci);
+        match promotion_result
+        {
+            MoveResult::Done => {
+                ui.set_pieces(game_2.borrow().get_pieces());
+                ui.set_whiteTurn(game_2.borrow().is_white_turn());
+                let outcome = game_2.borrow().get_outcome();
+            },
+            _ => ()
         }
     });
 
